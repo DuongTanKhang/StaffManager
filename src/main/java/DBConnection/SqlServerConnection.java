@@ -5,9 +5,9 @@ import java.sql.SQLException;
 
 public class SqlServerConnection {
 	public static void main(String[] args) {
-		var url = "jdbc:sqlserver://localhost:1433;databaseName=Staff_Timekeeping_Management;encrypt=true;trustServerCertificate=true;";
+		var url = "jdbc:sqlserver://localhost:1433;databaseName=Staff_Timekeeping_Managment_2;encrypt=true;trustServerCertificate=true;";
 		var user = "sa";
-		var password = "123";
+		var password = "123456";
 
 		try (var conn = DriverManager.getConnection(url, user, password)) {
 			if (conn != null) {
