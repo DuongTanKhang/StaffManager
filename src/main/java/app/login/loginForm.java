@@ -1,7 +1,9 @@
 package app.login;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,6 +12,7 @@ public class loginForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JButton btnNewButton;
 
 	/**
 	 * Launch the application.
@@ -35,6 +38,12 @@ public class loginForm extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
+		btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(this::btnNewButtonActionPerformed);
+		contentPane.add(btnNewButton);
+
 	}
 
+	protected void btnNewButtonActionPerformed(ActionEvent e) {
+	}
 }
