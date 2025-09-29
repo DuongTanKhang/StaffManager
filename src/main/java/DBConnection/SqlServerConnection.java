@@ -17,5 +17,6 @@ public class SqlServerConnection {
 			System.out.println("Lỗi kết nối: " + e.getMessage());
 			e.printStackTrace();
 		}
+
 	}
 }
