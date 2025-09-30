@@ -52,24 +52,36 @@ public class Employee_List extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
-		// Table
-		String[] columnNames = {"Name", "Role", "Phone", "Email", "Date of Birth", "Gender", "Work Type"};
+		String[] columnNames = {"ID", "Name", "Role", "Phone", "Email", "Date of Birth", "Gender", "Work Type"};
 		tableModel = new DefaultTableModel(columnNames, 0);
 		table = new JTable(tableModel);
+
+		table.removeColumn(table.getColumnModel().getColumn(0));
 
 		var scrollPanel = new JScrollPane(table);
 		contentPane.add(scrollPanel, BorderLayout.CENTER);
 
 		// Buttons panel
 		var panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		btnAdd = new JButton("Add Employee");
+		btnEdit = new JButton("Edit Employee");
+
+		panelButtons.add(btnAdd);
+		panelButtons.add(btnEdit);
+		contentPane.add(panelButtons, BorderLayout.SOUTH);
+
+		// DAO
+		_employeeDAO = new EmployeeDAO();
+		loadEmployees();
+
+		// Add button
 		btnAdd.addActionListener(e -> {
 			var dialog = new EmployeeFormDialog(this, null);
 			dialog.setVisible(true);
 			if (dialog.isSucceeded()) {
 				try {
 					_employeeDAO.addEmployee(dialog.getEmployee());
-					tableModel.setRowCount(0); // clear
-					loadEmployees();
+					reloadEmployees();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					JOptionPane.showMessageDialog(this, "Error adding employee: " + ex.getMessage());
@@ -77,6 +89,7 @@ public class Employee_List extends JFrame {
 			}
 		});
 
+		// Edit button
 		btnEdit.addActionListener(e -> {
 			var row = table.getSelectedRow();
 			if (row == -1) {
@@ -84,16 +97,18 @@ public class Employee_List extends JFrame {
 				return;
 			}
 
-			var name = (String) tableModel.getValueAt(row, 0);
-			var role = (String) tableModel.getValueAt(row, 1);
-			var phone = (String) tableModel.getValueAt(row, 2);
-			var email = (String) tableModel.getValueAt(row, 3);
-			var dobStr = (String) tableModel.getValueAt(row, 4);
-			var genderStr = (String) tableModel.getValueAt(row, 5);
-			var workTypeStr = (String) tableModel.getValueAt(row, 6);
+			var modelRow = table.convertRowIndexToModel(row);
+			var id = (int) tableModel.getValueAt(modelRow, 0);
+			var name = (String) tableModel.getValueAt(modelRow, 1);
+			var role = (String) tableModel.getValueAt(modelRow, 2);
+			var phone = (String) tableModel.getValueAt(modelRow, 3);
+			var email = (String) tableModel.getValueAt(modelRow, 4);
+			var dobStr = (String) tableModel.getValueAt(modelRow, 5);
+			var genderStr = (String) tableModel.getValueAt(modelRow, 6);
+			var workTypeStr = (String) tableModel.getValueAt(modelRow, 7);
 
 			var emp = new Employee(
-					0, // TODO: bạn cần lấy id từ DB hoặc giữ hidden column trong table
+					id,
 					name,
 					role,
 					phone,
@@ -108,16 +123,13 @@ public class Employee_List extends JFrame {
 			if (dialog.isSucceeded()) {
 				try {
 					_employeeDAO.updateEmployee(dialog.getEmployee());
-					tableModel.setRowCount(0);
-					loadEmployees();
+					reloadEmployees();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					JOptionPane.showMessageDialog(this, "Error updating employee: " + ex.getMessage());
 				}
 			}
 		});
-		_employeeDAO = new EmployeeDAO();
-		loadEmployees();
 	}
 
 	private void loadEmployees() {
@@ -128,6 +140,7 @@ public class Employee_List extends JFrame {
 			var workTypeText = emp.is_work_type() ? "Full-time" : "Part-time";
 
 			tableModel.addRow(new Object[]{
+					emp.get_id(),
 					emp.get_name(),
 					emp.get_role(),
 					emp.get_phone(),
@@ -137,5 +150,10 @@ public class Employee_List extends JFrame {
 							workTypeText
 			});
 		}
+	}
+
+	private void reloadEmployees() {
+		tableModel.setRowCount(0); // clear table
+		loadEmployees();
 	}
 }
