@@ -2,9 +2,9 @@ package app.views;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.sql.Connection;
+import java.awt.FlowLayout;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +22,8 @@ public class Employee_List extends JFrame {
 	private DefaultTableModel tableModel;
 	private EmployeeDAO _employeeDAO;
 	private JTable table;
-	private Connection conn;
+	private JButton btnAdd;
+	private JButton btnEdit;
 
 	/**
 	 * Launch the application.
@@ -58,14 +59,18 @@ public class Employee_List extends JFrame {
 		var scrollPanel = new JScrollPane(table);
 		contentPane.add(scrollPanel, BorderLayout.CENTER);
 
-		// List
-		_employeeDAO = new EmployeeDAO(conn);
-		loadEmployees();
+		// Buttons panel
+		var panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		btnAdd = new JButton("Add Employee");
+		btnEdit = new JButton("Edit Employee");
+		panelButtons.add(btnAdd);
+		panelButtons.add(btnEdit);
 
-		btnAdd.addActionListener((ActionEvent e) -> {
-			Employee_Form addForm = new Employee_Form(this, null); // null nghĩa là thêm mới
-			addForm.setVisible(true);
-		});
+		contentPane.add(panelButtons, BorderLayout.SOUTH);
+
+		// DAO
+		_employeeDAO = new EmployeeDAO();
+		loadEmployees();
 	}
 
 	private void loadEmployees() {

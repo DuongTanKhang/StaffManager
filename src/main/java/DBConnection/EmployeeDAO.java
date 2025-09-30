@@ -1,6 +1,5 @@
 package DBConnection;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +7,7 @@ import java.util.List;
 import model.Employee;
 
 public class EmployeeDAO {
-	private Connection conn;
 
-	public EmployeeDAO(Connection conn) {
-		this.conn = conn;
-	}
 	public List<Employee> getAllEmployees() {
 		List<Employee> list = new ArrayList<>();
 
@@ -41,9 +36,12 @@ public class EmployeeDAO {
 		}
 		return list;
 	}
+
 	public void addEmployee(Employee emp) throws SQLException {
 		var sql = "INSERT INTO tbl_employee (_name, _role, _phone, _email, _dob, _gender, _work_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (var ps = conn.prepareStatement(sql)) {
+		try (var conn = SqlServerConnection.getConnection();
+				var ps = conn.prepareStatement(sql)) {
+
 			ps.setString(1, emp.get_name());
 			ps.setString(2, emp.get_role());
 			ps.setString(3, emp.get_phone());
@@ -54,11 +52,14 @@ public class EmployeeDAO {
 			ps.executeUpdate();
 		}
 	}
+
 	public void updateEmployee(Employee emp) throws SQLException {
 		var sql = "UPDATE tbl_employee SET _name=?, _role=?, _phone=?, _email=?, _dob=?, _gender=?, _work_type=? WHERE _id=?";
-		try (var ps = conn.prepareStatement(sql)) {
+		try (var conn = SqlServerConnection.getConnection();
+				var ps = conn.prepareStatement(sql)) {
+
 			ps.setString(1, emp.get_name());
-			ps.setString(2, emp.get_name());
+			ps.setString(2, emp.get_role());
 			ps.setString(3, emp.get_phone());
 			ps.setString(4, emp.get_email());
 			ps.setDate(5, emp.get_dob());
