@@ -1,6 +1,7 @@
 package app.views;
 
-import java.awt.BorderLayout;
+
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -16,17 +17,21 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
+import app.views.subFrame.AdminProfile;
+
+
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private JPanel panelCenter;
 	private JMenuBar menuBar;
-	private JMenu mnNewMenu;
+	private JMenu adminMenu;
 	private JMenu mnNewMenu_1;
-	private JMenuItem mntmNewMenuItem;
+	private JMenuItem adminProfileBtn;
 	private JSeparator separator;
-	private JMenuItem mntmNewMenuItem_1;
+	private JMenuItem logoutBtn;
 	private JMenuItem mntmNewMenuItem_2;
+	private JPanel panel;
 
 	/**
 	 * Launch the application.
@@ -46,38 +51,47 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		setTitle("Manage Employee");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1214, 573);
 
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
-		mnNewMenu = new JMenu("Admin");
-		menuBar.add(mnNewMenu);
+		adminMenu = new JMenu("Admin");
+		menuBar.add(adminMenu);
 
-		mntmNewMenuItem = new JMenuItem("Profile");
-		mnNewMenu.add(mntmNewMenuItem);
+		adminProfileBtn = new JMenuItem("Profile");
+		adminProfileBtn.addActionListener(this::adminProfileBtnActionPerformed);
+		adminMenu.add(adminProfileBtn);
 
 		separator = new JSeparator();
-		mnNewMenu.add(separator);
+		adminMenu.add(separator);
 
-		mntmNewMenuItem_1 = new JMenuItem("Log out");
-		mnNewMenu.add(mntmNewMenuItem_1);
+		logoutBtn = new JMenuItem("Log out");
+		adminMenu.add(logoutBtn);
 
 		mnNewMenu_1 = new JMenu("Employee");
 		menuBar.add(mnNewMenu_1);
 
 		mntmNewMenuItem_2 = new JMenuItem("Manage Employee");
 		mnNewMenu_1.add(mntmNewMenuItem_2);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		panelCenter = new JPanel();
+		panelCenter.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(panelCenter);
+		panelCenter.setLayout(new CardLayout(0, 0));
+
+		panel = new JPanel();
+		panelCenter.add(panel, "name_82586991688700");
+		panel.setLayout(null);
+
+		var adminProfilePanel = new AdminProfile();
+		panelCenter.add(adminProfilePanel,"adminProfilePanel");
+
 
 	}
 
-	protected void btnNewButtonActionPerformed(ActionEvent e) {
-	}
+
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			@Override
@@ -96,5 +110,10 @@ public class MainFrame extends JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	protected void adminProfileBtnActionPerformed(ActionEvent e) {
+		var layout = (CardLayout)panelCenter.getLayout();
+		layout.show(panelCenter,"adminProfilePanel");
+
 	}
 }
