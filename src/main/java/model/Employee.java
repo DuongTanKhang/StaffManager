@@ -24,6 +24,17 @@ public class Employee {
 		this._gender = _gender;
 		this._work_type = _work_type;
 	}
+
+	public Employee(String _name, String _role, String _phone, String _email, Date _dob, boolean _gender, boolean _work_type) {
+		this._name = _name;
+		this._role = _role;
+		this._phone = _phone;
+		this._email = _email;
+		this._dob = _dob;
+		this._gender = _gender;
+		this._work_type = _work_type;
+	}
+
 	public int get_id() {
 		return _id;
 	}

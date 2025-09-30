@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -61,14 +62,60 @@ public class Employee_List extends JFrame {
 
 		// Buttons panel
 		var panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		btnAdd = new JButton("Add Employee");
-		btnEdit = new JButton("Edit Employee");
-		panelButtons.add(btnAdd);
-		panelButtons.add(btnEdit);
+		btnAdd.addActionListener(e -> {
+			var dialog = new EmployeeFormDialog(this, null);
+			dialog.setVisible(true);
+			if (dialog.isSucceeded()) {
+				try {
+					_employeeDAO.addEmployee(dialog.getEmployee());
+					tableModel.setRowCount(0); // clear
+					loadEmployees();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Error adding employee: " + ex.getMessage());
+				}
+			}
+		});
 
-		contentPane.add(panelButtons, BorderLayout.SOUTH);
+		btnEdit.addActionListener(e -> {
+			var row = table.getSelectedRow();
+			if (row == -1) {
+				JOptionPane.showMessageDialog(this, "Please select an employee to edit!");
+				return;
+			}
 
-		// DAO
+			var name = (String) tableModel.getValueAt(row, 0);
+			var role = (String) tableModel.getValueAt(row, 1);
+			var phone = (String) tableModel.getValueAt(row, 2);
+			var email = (String) tableModel.getValueAt(row, 3);
+			var dobStr = (String) tableModel.getValueAt(row, 4);
+			var genderStr = (String) tableModel.getValueAt(row, 5);
+			var workTypeStr = (String) tableModel.getValueAt(row, 6);
+
+			var emp = new Employee(
+					0, // TODO: bạn cần lấy id từ DB hoặc giữ hidden column trong table
+					name,
+					role,
+					phone,
+					email,
+					dobStr.equals("Not provided") ? null : java.sql.Date.valueOf(dobStr),
+							genderStr.equals("Male"),
+							workTypeStr.equals("Full-time")
+					);
+
+			var dialog = new EmployeeFormDialog(this, emp);
+			dialog.setVisible(true);
+			if (dialog.isSucceeded()) {
+				try {
+					_employeeDAO.updateEmployee(dialog.getEmployee());
+					tableModel.setRowCount(0);
+					loadEmployees();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Error updating employee: " + ex.getMessage());
+				}
+			}
+		});
 		_employeeDAO = new EmployeeDAO();
 		loadEmployees();
 	}
