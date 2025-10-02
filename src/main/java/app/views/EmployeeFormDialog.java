@@ -19,6 +19,10 @@ import model.Employee;
 
 public class EmployeeFormDialog extends JDialog {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private JTextField txtName, txtRole, txtPhone, txtEmail;
 	private JTextField txtDob;
 	private JRadioButton rbMale, rbFemale;
