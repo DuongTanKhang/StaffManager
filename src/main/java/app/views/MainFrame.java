@@ -18,6 +18,7 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
 import app.views.subFrame.AdminProfile;
+import app.views.subFrame.EmployeeList;
 
 
 public class MainFrame extends JFrame {
@@ -30,7 +31,7 @@ public class MainFrame extends JFrame {
 	private JMenuItem adminProfileBtn;
 	private JSeparator separator;
 	private JMenuItem logoutBtn;
-	private JMenuItem mntmNewMenuItem_2;
+	private JMenuItem employeeBtn;
 	private JPanel panel;
 
 	/**
@@ -53,7 +54,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("Manage Employee");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1214, 573);
+		setBounds(100, 100, 920, 540);
 
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -74,8 +75,10 @@ public class MainFrame extends JFrame {
 		mnNewMenu_1 = new JMenu("Employee");
 		menuBar.add(mnNewMenu_1);
 
-		mntmNewMenuItem_2 = new JMenuItem("Manage Employee");
-		mnNewMenu_1.add(mntmNewMenuItem_2);
+		employeeBtn = new JMenuItem("Manage Employee");
+		employeeBtn.addActionListener(this::employeeBtnActionPerformed);
+		mnNewMenu_1.add(employeeBtn);
+
 		panelCenter = new JPanel();
 		panelCenter.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(panelCenter);
@@ -86,7 +89,15 @@ public class MainFrame extends JFrame {
 		panel.setLayout(null);
 
 		var adminProfilePanel = new AdminProfile();
+		adminProfilePanel.setTitle("Admin");
 		panelCenter.add(adminProfilePanel,"adminProfilePanel");
+
+		//		var employeePanel = new EmployeeList();
+		//		employeePanel.setTitle("Employee");
+
+		var employeePanel_1 = new EmployeeList();
+		employeePanel_1.setTitle("Employee_1");
+		panelCenter.add(employeePanel_1,"employee_1");
 
 
 	}
@@ -115,5 +126,9 @@ public class MainFrame extends JFrame {
 		var layout = (CardLayout)panelCenter.getLayout();
 		layout.show(panelCenter,"adminProfilePanel");
 
+	}
+	protected void employeeBtnActionPerformed(ActionEvent e) {
+		var layout = (CardLayout)panelCenter.getLayout();
+		layout.show(panelCenter, "employee_1");
 	}
 }
