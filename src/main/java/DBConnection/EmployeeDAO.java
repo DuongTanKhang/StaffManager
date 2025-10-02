@@ -69,4 +69,42 @@ public class EmployeeDAO {
 			ps.executeUpdate();
 		}
 	}
+
+	public Employee getById(int id) {
+		var sql = "SELECT _id, _name, _role, _phone, _email, _dob, _gender, _work_type FROM tbl_employee WHERE _id = ?";
+		try (var conn = SqlServerConnection.getConnection();
+				var ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, id);
+			try (var rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return new Employee(
+							rs.getInt("_id"),
+							rs.getString("_name"),
+							rs.getString("_role"),
+							rs.getString("_phone"),
+							rs.getString("_email"),
+							rs.getDate("_dob"),
+							rs.getBoolean("_gender"),
+							rs.getBoolean("_work_type")
+							);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void deleteEmployee(int id) throws SQLException {
+		var sql = "DELETE FROM tbl_employee WHERE _id = ?";
+		try (var conn = SqlServerConnection.getConnection();
+				var ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, id);
+			ps.executeUpdate();
+		}
+	}
+
+
 }

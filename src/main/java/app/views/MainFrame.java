@@ -1,6 +1,5 @@
 package app.views;
 
-
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -20,23 +19,16 @@ import javax.swing.border.EmptyBorder;
 import app.views.subFrame.AdminProfile;
 import app.views.subFrame.EmployeeList;
 
-
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel panelCenter;
-	private JMenuBar menuBar;
-	private JMenu adminMenu;
-	private JMenu mnNewMenu_1;
-	private JMenuItem adminProfileBtn;
-	private JSeparator separator;
-	private JMenuItem logoutBtn;
-	private JMenuItem employeeBtn;
-	private JPanel panel;
 
-	/**
-	 * Launch the application.
-	 */
+	private static final String ADMIN_PROFILE_CARD = "AdminProfile";
+	private static final String EMPLOYEE_CARD = "EmployeeList";
+	private static final String DEFAULT_CARD = "Home";
+
+	private JPanel panelCenter;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
 			try {
@@ -48,60 +40,69 @@ public class MainFrame extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public MainFrame() {
 		setTitle("Manage Employee");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 920, 540);
 
-		menuBar = new JMenuBar();
+		// ===== Menu Bar =====
+		var menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
-		adminMenu = new JMenu("Admin");
+		// Admin Menu
+		var adminMenu = new JMenu("Admin");
 		menuBar.add(adminMenu);
 
-		adminProfileBtn = new JMenuItem("Profile");
+		var adminProfileBtn = new JMenuItem("Profile");
 		adminProfileBtn.addActionListener(this::adminProfileBtnActionPerformed);
 		adminMenu.add(adminProfileBtn);
 
-		separator = new JSeparator();
-		adminMenu.add(separator);
+		adminMenu.add(new JSeparator());
 
-		logoutBtn = new JMenuItem("Log out");
+		var logoutBtn = new JMenuItem("Log out");
+		logoutBtn.addActionListener(this::logoutBtnActionPerformed);
 		adminMenu.add(logoutBtn);
 
-		mnNewMenu_1 = new JMenu("Employee");
-		menuBar.add(mnNewMenu_1);
+		// Employee Menu
+		var employeeMenu = new JMenu("Employee");
+		menuBar.add(employeeMenu);
 
-		employeeBtn = new JMenuItem("Manage Employee");
+		var employeeBtn = new JMenuItem("Manage Employee");
 		employeeBtn.addActionListener(this::employeeBtnActionPerformed);
-		mnNewMenu_1.add(employeeBtn);
+		employeeMenu.add(employeeBtn);
 
-		panelCenter = new JPanel();
+		//		// Restaurant Menu
+		//		var restaurantMenu = new JMenu("Restaurant");
+		//		menuBar.add(restaurantMenu);
+		//
+		//		var restaurantBtn = new JMenuItem("Manage Restaurant");
+		//		restaurantBtn.addActionListener(this::restaurantBtnActionPerformed);
+		//		restaurantMenu.add(restaurantBtn);
+
+		panelCenter = new JPanel(new CardLayout());
 		panelCenter.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(panelCenter);
-		panelCenter.setLayout(new CardLayout(0, 0));
 
-		panel = new JPanel();
-		panelCenter.add(panel, "name_82586991688700");
-		panel.setLayout(null);
+		var defaultPanel = new JPanel();
+		panelCenter.add(defaultPanel, DEFAULT_CARD);
 
 		var adminProfilePanel = new AdminProfile();
-		adminProfilePanel.setTitle("Admin");
-		panelCenter.add(adminProfilePanel,"adminProfilePanel");
+		panelCenter.add(adminProfilePanel, ADMIN_PROFILE_CARD);
 
-		//		var employeePanel = new EmployeeList();
-		//		employeePanel.setTitle("Employee");
+		var employeePanel = new EmployeeList();
+		panelCenter.add(employeePanel, EMPLOYEE_CARD);
 
-		var employeePanel_1 = new EmployeeList();
-		employeePanel_1.setTitle("Employee_1");
-		panelCenter.add(employeePanel_1,"employee_1");
+		//		var restaurantPanel = new RestaurantList(); //thêm
+		//		panelCenter.add(restaurantPanel, RESTAURANT_CARD);
 
-
+		showPanel(DEFAULT_CARD);
+		showPanel(DEFAULT_CARD);
 	}
 
+	private void showPanel(String cardName) {
+		var layout = (CardLayout) panelCenter.getLayout();
+		layout.show(panelCenter, cardName);
+	}
 
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
@@ -111,24 +112,30 @@ public class MainFrame extends JFrame {
 					showMenu(e);
 				}
 			}
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
 				}
 			}
+
 			private void showMenu(MouseEvent e) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
 	}
-	protected void adminProfileBtnActionPerformed(ActionEvent e) {
-		var layout = (CardLayout)panelCenter.getLayout();
-		layout.show(panelCenter,"adminProfilePanel");
 
+	protected void adminProfileBtnActionPerformed(ActionEvent e) {
+		showPanel(ADMIN_PROFILE_CARD);
 	}
+
 	protected void employeeBtnActionPerformed(ActionEvent e) {
-		var layout = (CardLayout)panelCenter.getLayout();
-		layout.show(panelCenter, "employee_1");
+		showPanel(EMPLOYEE_CARD);
+	}
+
+	protected void logoutBtnActionPerformed(ActionEvent e) {
+		dispose();
+
 	}
 }

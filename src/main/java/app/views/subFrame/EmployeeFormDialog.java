@@ -15,45 +15,55 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import model.Employee;
 
 public class EmployeeFormDialog extends JDialog {
 
-	private JTextField txtName, txtRole, txtPhone, txtEmail;
-	private JTextField txtDob;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField txtName, txtRole, txtPhone, txtEmail, txtDob;
 	private JRadioButton rbMale, rbFemale;
 	private JComboBox<String> cbWorkType;
 	private boolean succeeded;
 	private Employee employee;
 
-	public EmployeeFormDialog(JInternalFrame parent, Employee emp) {
-		super(getWindowAncestor(parent), true);
+	public EmployeeFormDialog(Frame parentFrame, Employee emp) {
+		super(parentFrame, true);
 		setTitle(emp == null ? "Add Employee" : "Edit Employee");
-		setSize(400, 300);
-		setLocationRelativeTo(parent);
+		setSize(400, 320);
+		setLocationRelativeTo(parentFrame);
 		setLayout(new GridLayout(8, 2, 5, 5));
 
+		// ==== Name ====
 		add(new JLabel("Name:"));
 		txtName = new JTextField();
 		add(txtName);
 
+		// ==== Role ====
 		add(new JLabel("Role:"));
 		txtRole = new JTextField();
 		add(txtRole);
 
+		// ==== Phone ====
 		add(new JLabel("Phone:"));
 		txtPhone = new JTextField();
 		add(txtPhone);
 
+		// ==== Email ====
 		add(new JLabel("Email:"));
 		txtEmail = new JTextField();
 		add(txtEmail);
 
+		// ==== DOB ====
 		add(new JLabel("Date of Birth (yyyy-MM-dd):"));
 		txtDob = new JTextField();
 		add(txtDob);
 
+		// ==== Gender ====
 		add(new JLabel("Gender:"));
 		var genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		rbMale = new JRadioButton("Male");
@@ -65,15 +75,18 @@ public class EmployeeFormDialog extends JDialog {
 		genderPanel.add(rbFemale);
 		add(genderPanel);
 
+		// ==== Work Type ====
 		add(new JLabel("Work Type:"));
 		cbWorkType = new JComboBox<>(new String[]{"Full-time", "Part-time"});
 		add(cbWorkType);
 
+		// ==== Buttons ====
 		var btnOk = new JButton("OK");
 		var btnCancel = new JButton("Cancel");
 		add(btnOk);
 		add(btnCancel);
 
+		// Prefill nếu edit
 		if (emp != null) {
 			employee = emp;
 			txtName.setText(emp.get_name());
@@ -91,13 +104,19 @@ public class EmployeeFormDialog extends JDialog {
 			cbWorkType.setSelectedIndex(emp.is_work_type() ? 0 : 1);
 		}
 
+		// === Action buttons ===
 		btnOk.addActionListener(e -> {
 			try {
-				var name = txtName.getText();
-				var role = txtRole.getText();
-				var phone = txtPhone.getText();
-				var email = txtEmail.getText();
-				var dob = txtDob.getText().isBlank() ? null : Date.valueOf(txtDob.getText());
+				var name = txtName.getText().trim();
+				if (name.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Name is required!");
+					return;
+				}
+
+				var role = txtRole.getText().trim();
+				var phone = txtPhone.getText().trim();
+				var email = txtEmail.getText().trim();
+				var dob = txtDob.getText().isBlank() ? null : Date.valueOf(txtDob.getText().trim());
 				var gender = rbMale.isSelected();
 				var workType = cbWorkType.getSelectedIndex() == 0;
 
@@ -112,8 +131,10 @@ public class EmployeeFormDialog extends JDialog {
 					employee.set_gender(gender);
 					employee.set_work_type(workType);
 				}
+
 				succeeded = true;
 				dispose();
+
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
 			}
@@ -126,8 +147,8 @@ public class EmployeeFormDialog extends JDialog {
 	}
 
 	private static Frame getWindowAncestor(JInternalFrame parent) {
-		// TODO Auto-generated method stub
-		return null;
+		var win = SwingUtilities.getWindowAncestor(parent);
+		return (win instanceof Frame f) ? f : null;
 	}
 
 	public boolean isSucceeded() {
